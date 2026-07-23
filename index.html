@@ -2,7 +2,11 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
   <title>일하기 싫어ㅓㅓㅓㅓㅓ</title>
 
   <style>
@@ -12,111 +16,928 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --primary: #0d6efd;
+      --danger: #ff3b30;
+      --holiday: #e53935;
+      --saturday: #1976d2;
+      --text: #222;
+      --muted: #777;
+      --border: #e5e5e5;
+      --background: #efefef;
+    }
+
     body {
       width: 100%;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #efefef;
-      font-family: sans-serif;
+      min-height: 100vh;
+      padding: 30px 16px;
+      background: var(--background);
+      font-family:
+        Pretendard,
+        "Noto Sans KR",
+        Arial,
+        sans-serif;
+      color: var(--text);
+    }
+
+    .container {
+      width: min(850px, 100%);
+      margin: 0 auto;
     }
 
     .card {
-      width: 650px;
+      width: 100%;
+      padding: 45px 30px;
       background: white;
-      border-radius: 12px;
-      padding: 50px 30px;
+      border-radius: 16px;
       text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
     }
 
     .title {
+      margin-bottom: 25px;
       font-size: 38px;
-      font-weight: bold;
-      color: #000;
-      margin-bottom: 30px;
+      font-weight: 800;
       line-height: 1.4;
+      word-break: keep-all;
     }
 
     .timer {
+      color: var(--primary);
       font-size: 52px;
-      font-weight: bold;
-      color: #0d6efd;
+      font-weight: 800;
       line-height: 1.5;
     }
 
     .sub {
+      min-height: 45px;
       margin-top: 15px;
+      color: var(--danger);
+      font-size: 27px;
+      font-weight: 800;
+      line-height: 1.5;
+      word-break: keep-all;
+    }
+
+    .status {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    /* 달력 */
+
+    .calendar-card {
+      margin-top: 25px;
+      padding: 30px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 24px;
+    }
+
+    .calendar-title {
       font-size: 28px;
-      color: #ff3b30;
+      font-weight: 800;
+    }
+
+    .calendar-button {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: white;
+      font-size: 22px;
       font-weight: bold;
+      cursor: pointer;
+      transition:
+        background 0.2s,
+        transform 0.2s;
+    }
+
+    .calendar-button:hover {
+      background: #f5f5f5;
+    }
+
+    .calendar-button:active {
+      transform: scale(0.95);
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      border-top: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+    }
+
+    .weekday {
+      min-height: 48px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: #fafafa;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .weekday.sunday {
+      color: var(--holiday);
+    }
+
+    .weekday.saturday {
+      color: var(--saturday);
+    }
+
+    .day {
+      position: relative;
+      min-height: 105px;
+      padding: 10px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: white;
+      overflow: hidden;
+    }
+
+    .day.empty {
+      background: #fafafa;
+    }
+
+    .day-number {
+      width: 29px;
+      height: 29px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .day.sunday .day-number,
+    .day.holiday .day-number {
+      color: var(--holiday);
+    }
+
+    .day.saturday .day-number {
+      color: var(--saturday);
+    }
+
+    .day.today .day-number {
+      background: var(--primary);
+      color: white;
+    }
+
+    .holiday-name {
+      margin-top: 8px;
+      padding: 4px 5px;
+      border-radius: 5px;
+      background: #fff0f0;
+      color: var(--holiday);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.35;
+      word-break: keep-all;
+    }
+
+    .holiday-name.substitute {
+      background: #fff3e0;
+      color: #e65100;
+    }
+
+    .calendar-message {
+      display: none;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      background: #fff8e1;
+      color: #8a5a00;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .calendar-message.show {
+      display: block;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 18px;
+      color: #666;
+      font-size: 13px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    .legend-color.today {
+      background: var(--primary);
+    }
+
+    .legend-color.holiday {
+      background: #fff0f0;
+      border: 1px solid #ffc9c9;
+    }
+
+    .legend-color.substitute {
+      background: #fff3e0;
+      border: 1px solid #ffcc80;
+    }
+
+    @media (max-width: 650px) {
+      body {
+        padding: 16px 10px;
+      }
+
+      .card {
+        padding: 35px 18px;
+      }
+
+      .title {
+        font-size: 27px;
+      }
+
+      .timer {
+        font-size: 36px;
+      }
+
+      .sub {
+        font-size: 20px;
+      }
+
+      .calendar-card {
+        padding: 20px 10px;
+      }
+
+      .calendar-title {
+        font-size: 22px;
+      }
+
+      .day {
+        min-height: 82px;
+        padding: 6px 4px;
+      }
+
+      .day-number {
+        width: 25px;
+        height: 25px;
+        font-size: 13px;
+      }
+
+      .holiday-name {
+        padding: 3px;
+        font-size: 9px;
+      }
+
+      .weekday {
+        min-height: 40px;
+        font-size: 13px;
+      }
     }
   </style>
 </head>
+
 <body>
+  <main class="container">
+    <section class="card">
+      <div class="title" id="timerTitle">
+        구민을 위해 일한 척했던 시간
+      </div>
 
-  <div class="card">
+      <div class="timer" id="workTime">
+        0시간 0분 0초
+      </div>
 
-    <div class="title">
-      구민을 위해 일한척 했던 시간
-    </div>
+      <div class="sub" id="leaveTime">
+        퇴근까지 0초
+      </div>
 
-    <div class="timer" id="workTime">
-      0시간 0분 0초
-    </div>
+      <div class="status" id="workStatus">
+        현재 시간을 확인하고 있습니다.
+      </div>
+    </section>
 
-    <div class="sub" id="leaveTime">
-      퇴근까지 0초
-    </div>
+    <section class="calendar-card">
+      <div class="calendar-header">
+        <button
+          type="button"
+          class="calendar-button"
+          id="previousMonth"
+          aria-label="이전 달"
+        >
+          ‹
+        </button>
 
-  </div>
+        <h2 class="calendar-title" id="calendarTitle">
+          달력
+        </h2>
+
+        <button
+          type="button"
+          class="calendar-button"
+          id="nextMonth"
+          aria-label="다음 달"
+        >
+          ›
+        </button>
+      </div>
+
+      <div
+        class="calendar-message"
+        id="calendarMessage"
+      ></div>
+
+      <div class="calendar-grid" id="calendar">
+        <div class="weekday sunday">일</div>
+        <div class="weekday">월</div>
+        <div class="weekday">화</div>
+        <div class="weekday">수</div>
+        <div class="weekday">목</div>
+        <div class="weekday">금</div>
+        <div class="weekday saturday">토</div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <span class="legend-color today"></span>
+          오늘
+        </div>
+
+        <div class="legend-item">
+          <span class="legend-color holiday"></span>
+          공휴일
+        </div>
+
+        <div class="legend-item">
+          <span class="legend-color substitute"></span>
+          대체공휴일
+        </div>
+      </div>
+    </section>
+  </main>
 
   <script>
-    function updateTimer() {
+    const timerTitleElement =
+      document.getElementById("timerTitle");
 
-      const now = new Date();
+    const workTimeElement =
+      document.getElementById("workTime");
 
-      // 오전 9시
-      const start = new Date();
-      start.setHours(9, 0, 0, 0);
+    const leaveTimeElement =
+      document.getElementById("leaveTime");
 
-      // 오후 6시
-      const end = new Date();
-      end.setHours(18, 0, 0, 0);
+    const workStatusElement =
+      document.getElementById("workStatus");
 
-      // 오전 9시부터 지난 시간
-      let worked = now - start;
+    const calendarElement =
+      document.getElementById("calendar");
 
-      if (worked < 0) {
-        worked = 0;
+    const calendarTitleElement =
+      document.getElementById("calendarTitle");
+
+    const calendarMessageElement =
+      document.getElementById("calendarMessage");
+
+    const previousMonthButton =
+      document.getElementById("previousMonth");
+
+    const nextMonthButton =
+      document.getElementById("nextMonth");
+
+    const today = new Date();
+
+    let calendarYear = today.getFullYear();
+    let calendarMonth = today.getMonth();
+
+    /*
+      연도별 공휴일을 저장합니다.
+
+      구조:
+      {
+        2026: Map {
+          "2026-03-01" => {
+            name: "삼일절",
+            substitute: false
+          }
+        }
       }
+    */
+    const holidayCache = new Map();
 
-      const workedSeconds = Math.floor(worked / 1000);
+    const koreanHolidayNames = {
+      "New Year's Day": "신정",
+      "Lunar New Year's Day": "설날",
+      "Korean New Year": "설날",
+      "Independence Movement Day": "삼일절",
+      "Children's Day": "어린이날",
+      "Buddha's Birthday": "부처님오신날",
+      "Memorial Day": "현충일",
+      "Liberation Day": "광복절",
+      "Chuseok": "추석",
+      "National Foundation Day": "개천절",
+      "Hangeul Day": "한글날",
+      "Christmas Day": "성탄절",
+      "Election Day": "선거일",
+      "Constitution Day": "제헌절",
+      "Substitute Holiday": "대체공휴일"
+    };
 
-      const workH = Math.floor(workedSeconds / 3600);
-      const workM = Math.floor((workedSeconds % 3600) / 60);
-      const workS = workedSeconds % 60;
-
-      document.getElementById("workTime").innerText =
-        `${workH}시간 ${workM}분 ${workS}초`;
-
-      // 퇴근까지 남은 초
-      let remain = end - now;
-
-      if (remain < 0) {
-        remain = 0;
-      }
-
-      const remainSeconds = Math.floor(remain / 1000);
-
-      document.getElementById("leaveTime").innerText =
-        `퇴근까지 ${remainSeconds.toLocaleString()}초`;
+    function padNumber(number) {
+      return String(number).padStart(2, "0");
     }
 
-    updateTimer();
-    setInterval(updateTimer, 1000);
-  </script>
+    function formatDateKey(date) {
+      return [
+        date.getFullYear(),
+        padNumber(date.getMonth() + 1),
+        padNumber(date.getDate())
+      ].join("-");
+    }
 
+    function formatDuration(milliseconds) {
+      const totalSeconds = Math.max(
+        0,
+        Math.floor(milliseconds / 1000)
+      );
+
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor(
+        (totalSeconds % 3600) / 60
+      );
+      const seconds = totalSeconds % 60;
+
+      return `${hours}시간 ${minutes}분 ${seconds}초`;
+    }
+
+    function isWeekend(date) {
+      const day = date.getDay();
+      return day === 0 || day === 6;
+    }
+
+    function isWeekday(date) {
+      return !isWeekend(date);
+    }
+
+    function isHoliday(date) {
+      const yearHolidays =
+        holidayCache.get(date.getFullYear());
+
+      if (!yearHolidays) {
+        return false;
+      }
+
+      return yearHolidays.has(formatDateKey(date));
+    }
+
+    function isBusinessDay(date) {
+      return isWeekday(date) && !isHoliday(date);
+    }
+
+    function getHolidayName(item) {
+      if (item.localName) {
+        return item.localName;
+      }
+
+      return (
+        koreanHolidayNames[item.name] ??
+        item.name ??
+        "공휴일"
+      );
+    }
+
+    function isSubstituteHoliday(item, holidayName) {
+      const combinedName = [
+        item.localName,
+        item.name,
+        holidayName
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return (
+        combinedName.includes("대체") ||
+        combinedName.includes("substitute") ||
+        combinedName.includes("alternative")
+      );
+    }
+
+    async function fetchHolidays(year) {
+      if (holidayCache.has(year)) {
+        return holidayCache.get(year);
+      }
+
+      const holidayMap = new Map();
+
+      try {
+        const response = await fetch(
+          `https://date.nager.at/api/v3/publicholidays/${year}/KR`
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            `공휴일 API 오류: ${response.status}`
+          );
+        }
+
+        const holidays = await response.json();
+
+        holidays.forEach((item) => {
+          const holidayName = getHolidayName(item);
+
+          holidayMap.set(item.date, {
+            name: holidayName,
+            substitute: isSubstituteHoliday(
+              item,
+              holidayName
+            )
+          });
+        });
+
+        holidayCache.set(year, holidayMap);
+
+        calendarMessageElement.classList.remove("show");
+        calendarMessageElement.textContent = "";
+
+        return holidayMap;
+      } catch (error) {
+        console.error(error);
+
+        holidayCache.set(year, holidayMap);
+
+        calendarMessageElement.textContent =
+          "공휴일 정보를 불러오지 못했습니다. 인터넷 연결 또는 공휴일 API 상태를 확인해 주세요.";
+
+        calendarMessageElement.classList.add("show");
+
+        return holidayMap;
+      }
+    }
+
+    async function renderCalendar() {
+      const holidays =
+        await fetchHolidays(calendarYear);
+
+      /*
+        기존 날짜 칸만 제거합니다.
+        요일 제목 7개는 그대로 유지합니다.
+      */
+      const dateCells =
+        calendarElement.querySelectorAll(".day");
+
+      dateCells.forEach((cell) => cell.remove());
+
+      calendarTitleElement.textContent =
+        `${calendarYear}년 ${calendarMonth + 1}월`;
+
+      const firstDate =
+        new Date(calendarYear, calendarMonth, 1);
+
+      const lastDate =
+        new Date(calendarYear, calendarMonth + 1, 0);
+
+      const firstDayIndex = firstDate.getDay();
+      const lastDayNumber = lastDate.getDate();
+
+      for (let index = 0; index < firstDayIndex; index++) {
+        const emptyCell = document.createElement("div");
+        emptyCell.className = "day empty";
+        calendarElement.appendChild(emptyCell);
+      }
+
+      for (
+        let dayNumber = 1;
+        dayNumber <= lastDayNumber;
+        dayNumber++
+      ) {
+        const date = new Date(
+          calendarYear,
+          calendarMonth,
+          dayNumber
+        );
+
+        const dateKey = formatDateKey(date);
+        const holiday = holidays.get(dateKey);
+
+        const dayCell = document.createElement("div");
+        dayCell.classList.add("day");
+
+        if (date.getDay() === 0) {
+          dayCell.classList.add("sunday");
+        }
+
+        if (date.getDay() === 6) {
+          dayCell.classList.add("saturday");
+        }
+
+        if (holiday) {
+          dayCell.classList.add("holiday");
+        }
+
+        if (
+          date.getFullYear() === today.getFullYear() &&
+          date.getMonth() === today.getMonth() &&
+          date.getDate() === today.getDate()
+        ) {
+          dayCell.classList.add("today");
+        }
+
+        const numberElement =
+          document.createElement("div");
+
+        numberElement.className = "day-number";
+        numberElement.textContent = dayNumber;
+
+        dayCell.appendChild(numberElement);
+
+        if (holiday) {
+          const holidayElement =
+            document.createElement("div");
+
+          holidayElement.className = "holiday-name";
+          holidayElement.textContent = holiday.name;
+
+          if (holiday.substitute) {
+            holidayElement.classList.add("substitute");
+          }
+
+          dayCell.appendChild(holidayElement);
+        }
+
+        calendarElement.appendChild(dayCell);
+      }
+    }
+
+    function showNormalWorkTimer(now) {
+      const start = new Date(now);
+      start.setHours(9, 0, 0, 0);
+
+      const end = new Date(now);
+      end.setHours(18, 0, 0, 0);
+
+      timerTitleElement.textContent =
+        "구민을 위해 일한 척했던 시간";
+
+      /*
+        오전 5시부터 오전 9시 전까지
+      */
+      if (now < start) {
+        workTimeElement.textContent =
+          "0시간 0분 0초";
+
+        const untilStart = start - now;
+        const untilStartSeconds = Math.max(
+          0,
+          Math.ceil(untilStart / 1000)
+        );
+
+        leaveTimeElement.textContent =
+          `출근까지 ${untilStartSeconds.toLocaleString()}초`;
+
+        workStatusElement.textContent =
+          "아직 출근 전입니다.";
+
+        return;
+      }
+
+      /*
+        오전 9시부터 오후 6시 전까지
+      */
+      const workedMilliseconds = now - start;
+      const remainMilliseconds = end - now;
+
+      workTimeElement.textContent =
+        formatDuration(workedMilliseconds);
+
+      const remainSeconds = Math.max(
+        0,
+        Math.ceil(remainMilliseconds / 1000)
+      );
+
+      leaveTimeElement.textContent =
+        `퇴근까지 ${remainSeconds.toLocaleString()}초`;
+
+      workStatusElement.textContent =
+        "정상 근무시간입니다.";
+    }
+
+    function showOvertimeTimer(now, overtimeStart) {
+      const overtimeMilliseconds =
+        now - overtimeStart;
+
+      timerTitleElement.textContent =
+        "퇴근하지 못한 사축의 구슬픈 눈물이 흐른 시간";
+
+      workTimeElement.textContent =
+        formatDuration(overtimeMilliseconds);
+
+      const resetTime = new Date(overtimeStart);
+      resetTime.setDate(resetTime.getDate() + 1);
+      resetTime.setHours(5, 0, 0, 0);
+
+      const untilResetSeconds = Math.max(
+        0,
+        Math.ceil((resetTime - now) / 1000)
+      );
+
+      leaveTimeElement.textContent =
+        `눈물 초기화까지 ${untilResetSeconds.toLocaleString()}초`;
+
+      workStatusElement.textContent =
+        "오전 5시가 되면 초과 근무 시간이 초기화됩니다.";
+    }
+
+    function showHolidayTimer(now, holidayName) {
+      timerTitleElement.textContent =
+        "오늘은 일하지 않아도 되는 날";
+
+      workTimeElement.textContent =
+        "0시간 0분 0초";
+
+      leaveTimeElement.textContent =
+        holidayName
+          ? `${holidayName}입니다`
+          : "공휴일입니다";
+
+      workStatusElement.textContent =
+        "공휴일에는 근무시간을 계산하지 않습니다.";
+    }
+
+    function showWeekendTimer() {
+      timerTitleElement.textContent =
+        "오늘은 주말입니다";
+
+      workTimeElement.textContent =
+        "0시간 0분 0초";
+
+      leaveTimeElement.textContent =
+        "회사 생각을 멈추십시오";
+
+      workStatusElement.textContent =
+        "주말에는 근무시간을 계산하지 않습니다.";
+    }
+
+    function showResetTimer() {
+      timerTitleElement.textContent =
+        "사축의 눈물이 초기화되었습니다";
+
+      workTimeElement.textContent =
+        "0시간 0분 0초";
+
+      leaveTimeElement.textContent =
+        "오전 5시 초기화 완료";
+
+      workStatusElement.textContent =
+        "다음 근무시간을 기다리고 있습니다.";
+    }
+
+    function updateTimer() {
+      const now = new Date();
+
+      const currentHour = now.getHours();
+
+      const currentDateKey = formatDateKey(now);
+      const currentYearHolidays =
+        holidayCache.get(now.getFullYear());
+
+      const currentHoliday =
+        currentYearHolidays?.get(currentDateKey);
+
+      /*
+        00:00부터 04:59까지는
+        전날 18시부터 이어지는 초과 근무 시간입니다.
+      */
+      if (currentHour < 5) {
+        const previousDate = new Date(now);
+        previousDate.setDate(previousDate.getDate() - 1);
+
+        const previousHoliday =
+          holidayCache
+            .get(previousDate.getFullYear())
+            ?.get(formatDateKey(previousDate));
+
+        /*
+          전날이 평일이면서 공휴일이 아니어야
+          초과 근무 시간을 이어서 표시합니다.
+        */
+        if (
+          isWeekday(previousDate) &&
+          !previousHoliday
+        ) {
+          const overtimeStart =
+            new Date(previousDate);
+
+          overtimeStart.setHours(18, 0, 0, 0);
+
+          showOvertimeTimer(now, overtimeStart);
+          return;
+        }
+
+        showResetTimer();
+        return;
+      }
+
+      /*
+        현재 날짜가 공휴일인 경우
+      */
+      if (currentHoliday) {
+        showHolidayTimer(
+          now,
+          currentHoliday.name
+        );
+        return;
+      }
+
+      /*
+        토요일 또는 일요일인 경우
+      */
+      if (isWeekend(now)) {
+        showWeekendTimer();
+        return;
+      }
+
+      /*
+        평일 오후 6시 이후
+      */
+      if (currentHour >= 18) {
+        const overtimeStart = new Date(now);
+        overtimeStart.setHours(18, 0, 0, 0);
+
+        showOvertimeTimer(now, overtimeStart);
+        return;
+      }
+
+      /*
+        평일 오전 5시부터 오후 6시 전까지
+      */
+      showNormalWorkTimer(now);
+    }
+
+    async function initialize() {
+      /*
+        현재 연도와 인접 연도의 공휴일도 미리 가져옵니다.
+        연말·연초 오전 5시 이전 계산을 안정적으로 처리합니다.
+      */
+      await Promise.all([
+        fetchHolidays(today.getFullYear() - 1),
+        fetchHolidays(today.getFullYear()),
+        fetchHolidays(today.getFullYear() + 1)
+      ]);
+
+      await renderCalendar();
+      updateTimer();
+
+      setInterval(updateTimer, 1000);
+    }
+
+    previousMonthButton.addEventListener(
+      "click",
+      async () => {
+        calendarMonth--;
+
+        if (calendarMonth < 0) {
+          calendarMonth = 11;
+          calendarYear--;
+        }
+
+        await renderCalendar();
+      }
+    );
+
+    nextMonthButton.addEventListener(
+      "click",
+      async () => {
+        calendarMonth++;
+
+        if (calendarMonth > 11) {
+          calendarMonth = 0;
+          calendarYear++;
+        }
+
+        await renderCalendar();
+      }
+    );
+
+    initialize();
+  </script>
 </body>
 </html>
